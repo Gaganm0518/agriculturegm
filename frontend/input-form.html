@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Smart Agriculture - Data Entry">
+    <title>AI Smart Agriculture — Data Entry</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        .input-icon-wrapper {
+            position: relative;
+        }
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-green);
+        }
+        .input-icon-wrapper .form-input {
+            padding-left: 36px;
+        }
+        .action-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+        .checkbox-card {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex: 1;
+            min-width: 200px;
+            background: var(--gray-50);
+        }
+        .checkbox-card:hover {
+            border-color: var(--accent-green);
+            background: var(--white);
+        }
+        .checkbox-card input:checked + span {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+        .checkbox-card:has(input:checked) {
+            border-color: var(--primary-green);
+            background: var(--light-green);
+        }
+        .weather-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--font-size-sm);
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--info-light);
+            color: var(--info-blue);
+            border: 1px solid var(--info-blue);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .weather-btn:hover {
+            background: var(--info-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+
+        <div class="content-area">
+            <div class="card" style="max-width: 900px; margin: 0 auto;">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2 class="card-title">Agricultural Data Analysis</h2>
+                        <p style="color: var(--gray-600); font-size: var(--font-size-sm); margin-top: 4px;">Enter soil and weather parameters to get AI-powered insights.</p>
+                    </div>
+                    <button type="button" id="btn-live-weather" class="weather-btn">
+                        <i class="fas fa-location-dot"></i> Detect My Location
+                    </button>
+                </div>
+
+                <div id="weather-info-banner" style="display: none; background: var(--light-green); border-radius: var(--border-radius); padding: 10px 16px; margin-top: var(--spacing-md); display: none; align-items: center; gap: 12px; font-size: var(--font-size-sm);">
+                    <img loading="lazy" id="weather-icon" src="" alt="" style="width: 40px; height: 40px;">
+                    <div>
+                        <strong id="weather-city-label"></strong>
+                        <span id="weather-desc-label" style="color: var(--gray-600);"></span>
+                    </div>
+                </div>
+
+                <div id="alert-container"></div>
+
+                <form id="analysis-form" novalidate class="mt-3">
+                    
+                    <h3 style="color: var(--dark-green); margin-bottom: 1rem; border-bottom: 2px solid var(--light-green); padding-bottom: 4px;"><i class="fas fa-cloud"></i> Weather Data</h3>
+                    <div class="form-grid mb-3">
+                        <div class="form-group">
+                            <label for="temperature" class="form-label">Temperature (°C)</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-thermometer-half"></i>
+                                <input type="number" id="temperature" name="temperature" class="form-input" min="0" max="60" step="0.1" placeholder="e.g., 25.5" required>
+                            </div>
+                            <div class="form-error" id="temperature-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="humidity" class="form-label">Humidity (%)</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-tint"></i>
+                                <input type="number" id="humidity" name="humidity" class="form-input" min="0" max="100" step="0.1" placeholder="e.g., 60.0" required>
+                            </div>
+                            <div class="form-error" id="humidity-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rainfall" class="form-label">Rainfall (mm)</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-cloud-rain"></i>
+                                <input type="number" id="rainfall" name="rainfall" class="form-input" min="0" max="500" step="0.1" placeholder="e.g., 120.5" required>
+                            </div>
+                            <div class="form-error" id="rainfall-error"></div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--dark-green); margin-bottom: 1rem; border-bottom: 2px solid var(--light-green); padding-bottom: 4px;"><i class="fas fa-seedling"></i> Soil Data</h3>
+                    <div class="form-grid mb-3">
+                        <div class="form-group">
+                            <label for="soil_type" class="form-label">Soil Type</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-layer-group"></i>
+                                <select id="soil_type" name="soil_type" class="form-input" required>
+                                    <option value="" disabled selected>Select Soil Type</option>
+                                    <option value="Loamy">Loamy</option>
+                                    <option value="Sandy">Sandy</option>
+                                    <option value="Clay">Clay</option>
+                                    <option value="Silt">Silt</option>
+                                    <option value="Peaty">Peaty</option>
+                                    <option value="Chalky">Chalky</option>
+                                    <option value="Saline">Saline</option>
+                                </select>
+                            </div>
+                            <div class="form-error" id="soil_type-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nitrogen" class="form-label">Nitrogen (N) kg/ha</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-flask"></i>
+                                <input type="number" id="nitrogen" name="nitrogen" class="form-input" min="0" placeholder="e.g., 90" required>
+                            </div>
+                            <div class="form-error" id="nitrogen-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phosphorus" class="form-label">Phosphorus (P) kg/ha</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-flask"></i>
+                                <input type="number" id="phosphorus" name="phosphorus" class="form-input" min="0" placeholder="e.g., 42" required>
+                            </div>
+                            <div class="form-error" id="phosphorus-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="potassium" class="form-label">Potassium (K) kg/ha</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-flask"></i>
+                                <input type="number" id="potassium" name="potassium" class="form-input" min="0" placeholder="e.g., 43" required>
+                            </div>
+                            <div class="form-error" id="potassium-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ph" class="form-label">Soil pH</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-vial"></i>
+                                <input type="number" id="ph" name="ph" class="form-input" min="0" max="14" step="0.1" placeholder="e.g., 6.5" required>
+                            </div>
+                            <div class="form-error" id="ph-error"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: none;">
+                        <input type="checkbox" name="actions" value="crop_recommendation" checked>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" style="min-width: 200px;">
+                            <span id="btn-text"><i class="fas fa-magic"></i> Run AI Analysis</span>
+                            <div class="loading-spinner" id="btn-spinner" style="display: none; width: 20px; height: 20px; border-width: 2px; border-top-color: white;"></div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>
