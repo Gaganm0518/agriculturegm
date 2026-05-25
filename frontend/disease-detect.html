@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .upload-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        /* Drag & Drop Area */
+        .drop-zone {
+            border: 3px dashed var(--gray-300);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            text-align: center;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--primary-green);
+            background-color: var(--light-green);
+        }
+
+        .drop-zone-icon {
+            font-size: 4rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-text {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone-subtext {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        /* Hidden File Input */
+        .drop-zone__input {
+            display: none;
+        }
+
+        /* Image Preview Area */
+        .preview-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--primary-green);
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--danger-red);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            text-decoration: underline;
+        }
+
+        /* Action Section */
+        .action-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-healthy {
+            background-color: var(--light-green);
+            color: var(--dark-green);
+        }
+
+        .status-disease {
+            background-color: #fee2e2;
+            color: #dc2626; /* red */
+        }
+
+        .disease-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .text-healthy { color: var(--dark-green); }
+        .text-disease { color: #dc2626; }
+
+        .confidence-meter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            color: var(--gray-600);
+        }
+
+        .grid-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-results { grid-template-columns: 1fr; }
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .info-card.symptoms h3 { color: #ea580c; }
+        .info-card.treatment h3 { color: var(--primary-green); }
+
+        .info-text {
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .uploaded-img-result {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .spinner-large {
+            width: 60px;
+            height: 60px;
+            border: 6px solid var(--light-green);
+            border-top: 6px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .print-only { display: none; }
+        
+        @media print {
+            body { background: white; }
+            .sidebar, .topnav, .action-buttons, .upload-container { display: none !important; }
+            .main-content { margin: 0 !important; padding: 0 !important; }
+            .print-only { display: block; text-align: center; margin-bottom: 2rem; }
+            .result-header { box-shadow: none; border: 2px solid #ccc; }
+            .info-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+
+        <div class="content-area">
+            
+            <!-- Upload Section -->
+            <div class="upload-container" id="upload-section">
+                <div class="info-card" style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="color: var(--dark-green); margin-bottom: 0.5rem;"><span data-i18n="dis.title">Diagnose Plant Diseases with AI</span></h2>
+                    <p style="color: var(--gray-500);"><span data-i18n="dis.subtitle">Upload a clear photo of a plant leaf to instantly identify diseases and receive expert treatment plans.</span></p>
+                </div>
+
+                <form id="upload-form">
+                    <div class="drop-zone" id="drop-zone">
+                        <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
+                        <p class="drop-zone-text"><span data-i18n="dis.drag">Drag and drop a leaf image here</span></p>
+                        <p class="drop-zone-subtext"><span data-i18n="dis.browse">or click to browse from your device</span></p>
+                        <p class="drop-zone-subtext" style="margin-top: 1rem;"><small><span data-i18n="dis.formats">Supported formats: JPG, PNG (Max 5MB)</span></small></p>
+                        <input type="file" name="image" id="file-input" class="drop-zone__input" accept="image/jpeg, image/png">
+                    </div>
+
+                    <div class="preview-container" id="preview-container">
+                        <img loading="lazy" src="" alt="Image Preview" class="preview-image" id="image-preview">
+                        <p class="file-info" id="file-name"></p>
+                        <button type="button" class="remove-btn" id="remove-btn"><span data-i18n="dis.btn.remove">Remove Image</span></button>
+                    </div>
+
+                    <div class="form-error" id="upload-error" style="text-align: center; margin-top: 1rem; display: none;"></div>
+
+                    <div class="action-section">
+                        <button type="submit" class="btn btn-primary btn-lg" id="detect-btn" disabled>
+                            <i class="fas fa-search"></i> <span data-i18n="dis.btn.detect">Detect Disease</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="results-section">
+                <h1 class="print-only">Plant Disease AI Diagnosis Report</h1>
+                
+                <div class="result-header" id="result-header">
+                    <div class="status-badge" id="status-badge">Analysis Complete</div>
+                    <h2 class="disease-title" id="disease-name">Disease Name</h2>
+                    
+                    <div class="confidence-meter">
+                        <i class="fas fa-check-circle" style="color: var(--primary-green);"></i>
+                        <span>AI Confidence: <strong id="confidence-score">0%</strong></span>
+                    </div>
+                </div>
+
+                <div class="grid-results">
+                    <!-- Left Column -->
+                    <div class="column">
+                        <div class="info-card symptoms" style="margin-bottom: 1.5rem;">
+                            <h3><i class="fas fa-stethoscope"></i> Symptoms & Diagnosis</h3>
+                            <p class="info-text" id="symptoms-text">Loading...</p>
+                            
+                            <div style="margin-top: 1rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--gray-100); padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+                                    Severity: <span id="severity-badge" style="color: #dc2626;">High</span>
+                                </span>
+                                <span style="background: var(--gray-100); padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+                                    Affects: <span id="affected-crops" style="color: var(--primary-green);">Tomatoes</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3 style="color: var(--gray-600);"><i class="fas fa-image"></i> Analyzed Image</h3>
+                            <img loading="lazy" src="" id="result-image" class="uploaded-img-result" alt="Analyzed Leaf">
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="column">
+                        <div class="info-card treatment" style="height: 100%;">
+                            <h3><i class="fas fa-prescription-bottle-alt"></i> Treatment & Remedy Plan</h3>
+                            <p class="info-text" id="remedy-text" style="white-space: pre-line;">Loading...</p>
+                            
+                            <div style="margin-top: 2rem; padding: 1rem; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;">
+                                <strong><i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Disclaimer:</strong>
+                                <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--gray-600);">This is an AI-generated diagnosis. While highly accurate, always consult with a local agricultural extension office before applying strong chemical treatments.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons" style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-secondary btn-lg" id="try-another-btn">
+                        <i class="fas fa-redo"></i> Try Another Image
+                    </button>
+                    <button class="btn btn-primary btn-lg" id="btn-download-report">
+                        <i class="fas fa-file-pdf"></i> Download Report
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner-large"></div>
+        <h3 style="color: var(--dark-green); margin-bottom: 0.5rem;">Analyzing your plant leaf...</h3>
+        <p style="color: var(--gray-500);">Our AI is running millions of calculations.</p>
+    </div>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

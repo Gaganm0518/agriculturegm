@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Crop Recommendation Result</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .result-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .celebratory-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebratory-header::before {
+            content: "\f06c"; /* fa-leaf */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0.05;
+            top: -20%;
+            right: -5%;
+            transform: rotate(-15deg);
+        }
+
+        .crop-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            text-transform: capitalize;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+
+        /* Animated Progress Ring */
+        .progress-ring-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 408.4; /* Circumference of r=65 (2*pi*65) */
+            stroke-dashoffset: 408.4;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* Cards Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid var(--accent-green);
+        }
+
+        .info-card h3 {
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--gray-600);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .tips-box {
+            background: var(--light-green);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-green);
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--dark-green);
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body { background: white; }
+            .sidebar, .topnav, .action-buttons, .celebratory-header::before { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; }
+            .celebratory-header {
+                background: white;
+                color: black;
+                box-shadow: none;
+                border: 2px solid #ccc;
+                padding: 1rem;
+            }
+            .progress-text { color: black; }
+            .print-only { display: block; text-align: center; margin-bottom: 1rem; }
+            .info-card { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+
+        <div class="content-area">
+            <div class="result-container" id="result-content" style="display: none;">
+                
+                <h1 class="print-only">AI Smart Agriculture - Crop Report</h1>
+
+                <div class="celebratory-header">
+                    <p style="font-size: 1.2rem; opacity: 0.9; margin: 0; font-weight: 500;">Best Crop to Cultivate</p>
+                    <h2 class="crop-name" id="display-crop-name"><i class="fas fa-seedling"></i> Loading...</h2>
+                    
+                    <div class="progress-ring-container">
+                        <svg width="150" height="150" viewBox="0 0 150 150">
+                            <!-- Background ring -->
+                            <circle cx="75" cy="75" r="65" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="10"/>
+                            <!-- Progress ring -->
+                            <circle class="progress-ring__circle" id="confidence-ring" cx="75" cy="75" r="65" fill="none" stroke="white" stroke-width="10" stroke-linecap="round"/>
+                        </svg>
+                        <div class="progress-text">
+                            <span id="display-confidence">0%</span>
+                            <span class="progress-label">Confidence</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <!-- Crop Details Card -->
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Agronomy Profile</h3>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-cloud-sun"></i> Growing Season</span>
+                            <span class="detail-value" id="display-season">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-tint"></i> Water Needs</span>
+                            <span class="detail-value" id="display-water">Loading...</span>
+                        </div>
+                        
+                        <div class="tips-box">
+                            <strong><i class="fas fa-lightbulb"></i> Pro Tips:</strong><br>
+                            <span id="display-tips">Loading specific growing tips for this crop...</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Summary Card -->
+                    <div class="info-card">
+                        <h3><i class="fas fa-microscope"></i> Analysis Parameters</h3>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Nitrogen (N)</span>
+                            <span class="detail-value" id="param-n">0 kg/ha</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phosphorus (P)</span>
+                            <span class="detail-value" id="param-p">0 kg/ha</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Potassium (K)</span>
+                            <span class="detail-value" id="param-k">0 kg/ha</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Temperature</span>
+                            <span class="detail-value" id="param-temp">0 °C</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Humidity</span>
+                            <span class="detail-value" id="param-hum">0 %</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rainfall</span>
+                            <span class="detail-value" id="param-rain">0 mm</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Soil pH</span>
+                            <span class="detail-value" id="param-ph">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary btn-lg" onclick="window.location.href='/input-form.html'">
+                        <i class="fas fa-redo"></i> Try Another
+                    </button>
+                    <button class="btn btn-primary btn-lg" id="btn-download-report">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button class="btn btn-primary btn-lg" id="save-history-btn" style="background: var(--dark-green); border-color: var(--dark-green);">
+                        <i class="fas fa-bookmark"></i> Saved to History
+                    </button>
+                </div>
+
+            </div>
+            
+            <div id="error-content" style="display: none; text-align: center; margin-top: 5rem;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: var(--danger-red); margin-bottom: 1rem;"></i>
+                <h2>No Results Found</h2>
+                <p style="color: var(--gray-600); margin-bottom: 2rem;">We couldn't find the analysis results. Please submit a new form.</p>
+                <a href="/input-form.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Go to Data Entry</a>
+            </div>
+            
+        </div>
+    </main>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

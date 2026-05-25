@@ -1,0 +1,96 @@
+# ============================================================
+# AI Smart Agriculture — .gitignore
+# Python + Node.js + ML project
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.env
+.venv/
+
+# Byte-compiled
+*.pyc
+*.pyo
+
+# Distribution
+*.whl
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- ML Models (large files) ---
+models/*.pkl
+models/*.h5
+models/*.pb
+models/*.tflite
+models/*.onnx
+
+# --- Datasets (large files) ---
+datasets/*.csv
+datasets/*.xlsx
+datasets/*.json
+!datasets/.gitkeep
+
+# --- Uploads & Generated Files ---
+static/uploads/diseases/**
+!static/uploads/diseases/.gitkeep
+static/reports/**
+!static/reports/.gitkeep
+
+# --- Logs ---
+logs/*.log
+logs/*.log.*
+
+# --- Database ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Environment ---
+.env
+.env.local
+.env.production
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Misc ---
+*.bak
+*.tmp
+*.temp

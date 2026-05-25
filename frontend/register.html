@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register for AI Smart Agriculture - Intelligent farming solutions">
+    <title>AI Smart Agriculture — Register</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo" style="margin-bottom: var(--spacing-lg);">
+                <i class="fas fa-seedling"></i>
+                <h1 style="font-size: var(--font-size-xl);">Create an Account</h1>
+                <p>Join AI Smart Agriculture today</p>
+            </div>
+            
+            <div id="alert-container"></div>
+
+            <form id="register-form" novalidate>
+                <div class="form-group" style="text-align: left;">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
+                    <div class="form-error" id="name-error"></div>
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                    <div class="form-error" id="email-error"></div>
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label for="password" class="form-label">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Create a password (min 8 chars)" required>
+                        <i class="fas fa-eye" id="toggle-password" style="position: absolute; right: 15px; top: 12px; cursor: pointer; color: var(--gray-500);"></i>
+                    </div>
+                    <!-- Password strength indicator -->
+                    <div class="password-strength mt-1" id="password-strength-container" style="display: none; height: 4px; background: var(--gray-200); border-radius: 2px; overflow: hidden; margin-top: 6px;">
+                        <div id="password-strength-bar" style="height: 100%; width: 0%; transition: all 0.3s ease;"></div>
+                    </div>
+                    <div class="form-error" id="password-error"></div>
+                    <div style="font-size: 0.7rem; color: var(--gray-500); margin-top: 4px;">Must contain at least 8 characters, 1 uppercase, 1 lowercase, and 1 digit.</div>
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm your password" required>
+                    <div class="form-error" id="confirm-password-error"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-2" id="submit-btn">
+                    <span id="btn-text">Register</span>
+                    <div class="loading-spinner" id="btn-spinner" style="display: none; width: 16px; height: 16px; border-width: 2px;"></div>
+                </button>
+            </form>
+
+            <div class="mt-3" style="font-size: var(--font-size-sm); color: var(--gray-600);">
+                Already have an account? <a href="/login.html" style="font-weight: 600;">Log in</a>
+            </div>
+        </div>
+    </div>
+
+                <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

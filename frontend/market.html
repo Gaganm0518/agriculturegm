@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Market Prices</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-layout">
+
+    <main class="main-content">
+        <div class="content-area">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h1 style="color: var(--dark-green);"><i class="fas fa-rupee-sign"></i> Market Prices & Trends</h1>
+                <button id="refresh-prices" class="btn btn-secondary btn-sm"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+            </div>
+            
+            <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                
+                <!-- Live Prices Table Card -->
+                <div class="auth-card" style="margin: 0; max-width: 100%; text-align: left; padding: 1.5rem;">
+                    <h3 style="color: var(--dark-green); margin-bottom: 1rem;"><i class="fas fa-store"></i> Live Mandi Prices</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Crop</th>
+                                    <th>Current Price (₹/qtl)</th>
+                                    <th>Govt MSP (₹/qtl)</th>
+                                    <th>Difference</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prices-tbody">
+                                <tr>
+                                    <td colspan="4" class="text-center" style="padding: 2rem;">Loading prices...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Price Trend & Prediction Card -->
+                <div class="auth-card" style="margin: 0; max-width: 100%; text-align: left; padding: 1.5rem;">
+                    <h3 style="color: var(--dark-green); margin-bottom: 1rem;"><i class="fas fa-chart-area"></i> AI Sell Predictor</h3>
+                    
+                    <div class="form-group mb-3">
+                        <label class="form-label">Select Crop for Prediction</label>
+                        <select id="trend-crop-select" class="form-input">
+                            <option value="Rice">Rice</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                        </select>
+                    </div>
+
+                    <div id="ai-advice-box" style="display: none; background: var(--info-light); border: 1px solid var(--info-blue); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong style="color: var(--info-blue); display: block; margin-bottom: 0.5rem;"><i class="fas fa-robot"></i> AI Recommendation:</strong>
+                        <span id="ai-advice-text"></span>
+                    </div>
+
+                    <div style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

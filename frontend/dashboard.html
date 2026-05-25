@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Smart Agriculture - Dashboard">
+    <title>AI Smart Agriculture — Dashboard</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navigation -->
+        
+
+        <!-- Page Content -->
+        <div class="content-area">
+            <h1 class="mb-3" style="color: var(--dark-green);"><span data-i18n="dash.welcome">Welcome back</span>, <span id="welcome-name">Farmer</span>!</h1>
+            
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <a href="/input-form.html" class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-leaf"></i></div>
+                    <h3 class="feature-title">Crop Recommendation</h3>
+                    <p class="feature-desc">Discover the best crops to plant based on your soil and local climate.</p>
+                </a>
+                <a href="/disease-detect.html" class="feature-card">
+                    <div class="feature-icon" style="color: var(--error-red); background: var(--error-light);"><i class="fas fa-bug"></i></div>
+                    <h3 class="feature-title">Disease Detection</h3>
+                    <p class="feature-desc">Upload a leaf image to instantly detect plant diseases and get remedies.</p>
+                </a>
+                <a href="/yield-prediction.html" class="feature-card">
+                    <div class="feature-icon" style="color: var(--warning-orange); background: var(--warning-light);"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="feature-title">Yield Prediction</h3>
+                    <p class="feature-desc">Estimate your harvest yield based on historical and environmental data.</p>
+                </a>
+                <a href="/fertilizer-recommend.html" class="feature-card">
+                    <div class="feature-icon" style="color: var(--info-blue); background: var(--info-light);"><i class="fas fa-vial"></i></div>
+                    <h3 class="feature-title">Fertilizer Advice</h3>
+                    <p class="feature-desc">Get tailored fertilizer recommendations for optimal plant growth.</p>
+                </a>
+                <a href="/weather.html" class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <h3 class="feature-title">Weather Insights</h3>
+                    <p class="feature-desc">Real-time agricultural weather forecasts and climate alerts.</p>
+                </a>
+                <a href="/history.html" class="feature-card">
+                    <div class="feature-icon" style="color: var(--gray-700); background: var(--gray-200);"><i class="fas fa-history"></i></div>
+                    <h3 class="feature-title">My History</h3>
+                    <p class="feature-desc">Review your past predictions, tests, and recommendations.</p>
+                </a>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <h2 class="mb-2" style="font-size: var(--font-size-lg); color: var(--gray-800);">Recent Activity</h2>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Result</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <tr>
+                            <td colspan="4" class="text-center" style="padding: 2rem; color: var(--gray-500);">Loading history...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+        <script>
+        // Guard route
+        requireAuth();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sidebar toggle for mobile
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && 
+                    !sidebar.contains(e.target) && 
+                    !menuToggle.contains(e.target) && 
+                    sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+            // Logout handler
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await apiPost('/auth/logout');
+                removeToken();
+                window.location.href = '/login.html';
+            });
+
+            // Load user profile
+            const userRes = await apiGet('/auth/me');
+            if (userRes && userRes.success) {
+                const user = userRes.data.user;
+                document.getElementById('welcome-name').textContent = user.name.split(' ')[0];
+            }
+
+            // Load history
+            const historyRes = await apiGet('/history');
+            const tbody = document.getElementById('history-tbody');
+            
+            if (historyRes && historyRes.success) {
+                const history = historyRes.data.history;
+                
+                if (history.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--gray-500);">No recent activity found. Run your first prediction!</td></tr>`;
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                history.forEach(item => {
+                    const date = new Date(item.created_at).toLocaleDateString();
+                    const typeClass = `badge-${item.prediction_type}`;
+                    
+                    let resultText = '';
+                    let confidenceText = '-';
+                    
+                    if (item.prediction_type === 'crop') {
+                        resultText = `Recommended: ${item.result.recommended_crop}`;
+                        confidenceText = item.result.confidence_score ? `${(item.result.confidence_score * 100).toFixed(1)}%` : '-';
+                    } else if (item.prediction_type === 'disease') {
+                        resultText = `Detected: ${item.result.disease_name}`;
+                        confidenceText = item.result.confidence ? `${(item.result.confidence * 100).toFixed(1)}%` : '-';
+                    } else if (item.prediction_type === 'yield') {
+                        resultText = `Predicted: ${item.result.predicted_yield_kg} kg`;
+                    } else if (item.prediction_type === 'fertilizer') {
+                        resultText = `Advised: ${item.result.fertilizer_name}`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td><span class="badge ${typeClass}">${item.prediction_type}</span></td>
+                            <td><strong>${resultText}</strong></td>
+                            <td>${confidenceText}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center" style="padding: 2rem; color: var(--error-red);">Failed to load history.</td></tr>`;
+            }
+        });
+    </script>
+            <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Fertilizer Recommendation</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .split-layout { grid-template-columns: 1fr; }
+        }
+
+        .form-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        /* Result Section */
+        .result-section { display: none; }
+
+        .fert-card {
+            background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+            border-radius: var(--border-radius);
+            padding: 2.5rem 2rem;
+            color: white;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .fert-card::before {
+            content: "\f06c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            font-size: 12rem;
+            opacity: 0.06;
+            top: -10%;
+            right: -5%;
+            transform: rotate(-20deg);
+        }
+        .fert-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            letter-spacing: -0.5px;
+        }
+        .fert-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .fert-qty {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 1rem 0 0.25rem;
+        }
+        .fert-qty-unit {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+
+        /* NPK Bars */
+        .npk-bars {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-top: 1.5rem;
+        }
+        .npk-bars h4 {
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .npk-row {
+            margin-bottom: 1rem;
+        }
+        .npk-row:last-child { margin-bottom: 0; }
+        .npk-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .npk-bar-bg {
+            height: 14px;
+            background: var(--gray-100);
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        .npk-bar-fill {
+            height: 100%;
+            border-radius: 7px;
+            width: 0%;
+            transition: width 1.2s ease-out;
+        }
+        .npk-n { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+        .npk-p { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .npk-k { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        .npk-status {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .status-low { background: #fef2f2; color: #dc2626; }
+        .status-ok  { background: #f0fdf4; color: #16a34a; }
+        .status-high { background: #fffbeb; color: #d97706; }
+
+        /* Detail Cards */
+        .detail-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .detail-card-item {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-green);
+        }
+        .detail-card-item.warning {
+            border-left-color: #f59e0b;
+        }
+        .detail-card-item h4 {
+            color: var(--dark-green);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        .detail-card-item.warning h4 { color: #92400e; }
+        .detail-card-item p {
+            color: var(--gray-600);
+            line-height: 1.6;
+            font-size: 0.92rem;
+            margin: 0;
+        }
+
+        @media print {
+            .sidebar, .topnav, .form-card { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; }
+            .split-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+
+        <div class="content-area">
+
+            <div class="info-card" style="margin-bottom: 2rem;">
+                <h2 style="color: var(--dark-green); margin-bottom: 0.5rem;">Smart Fertilizer Advisor</h2>
+                <p style="color: var(--gray-600);">Enter your soil nutrient levels and growing conditions to receive a precise, AI-powered fertilizer recommendation with dosage and application guidance.</p>
+            </div>
+
+            <div class="split-layout">
+                <!-- Form -->
+                <div class="form-card">
+                    <form id="fert-form">
+
+                        <h4 style="color: var(--dark-green); margin-bottom: 1rem; border-bottom: 2px solid var(--light-green); padding-bottom: 4px;"><i class="fas fa-flask"></i> Soil Nutrients (NPK)</h4>
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="form-group">
+                                <label for="nitrogen" class="form-label">Nitrogen (N)</label>
+                                <input type="number" id="nitrogen" name="nitrogen" class="form-control" min="0" max="200" placeholder="e.g. 37" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phosphorus" class="form-label">Phosphorus (P)</label>
+                                <input type="number" id="phosphorus" name="phosphorus" class="form-control" min="0" max="200" placeholder="e.g. 0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="potassium" class="form-label">Potassium (K)</label>
+                                <input type="number" id="potassium" name="potassium" class="form-control" min="0" max="300" placeholder="e.g. 0" required>
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--gray-200); margin: 1.5rem 0;">
+
+                        <h4 style="color: var(--dark-green); margin-bottom: 1rem; border-bottom: 2px solid var(--light-green); padding-bottom: 4px;"><i class="fas fa-seedling"></i> Crop & Soil</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="crop" class="form-label">Crop Type</label>
+                                <select id="crop" name="crop" class="form-control" required>
+                                    <option value="">Select Crop</option>
+                                    <option value="Rice">Rice</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Maize">Maize</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Sugarcane">Sugarcane</option>
+                                    <option value="Millets">Millets</option>
+                                    <option value="Pulses">Pulses</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="soil_type" class="form-label">Soil Type</label>
+                                <select id="soil_type" name="soil_type" class="form-control" required>
+                                    <option value="">Select Soil</option>
+                                    <option value="Sandy">Sandy</option>
+                                    <option value="Loamy">Loamy</option>
+                                    <option value="Black">Black</option>
+                                    <option value="Red">Red</option>
+                                    <option value="Clayey">Clayey</option>
+                                    <option value="Peaty">Peaty</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--gray-200); margin: 1.5rem 0;">
+
+                        <h4 style="color: var(--dark-green); margin-bottom: 1rem; border-bottom: 2px solid var(--light-green); padding-bottom: 4px;"><i class="fas fa-cloud-sun"></i> Environment</h4>
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="form-group">
+                                <label for="temperature" class="form-label">Temp (°C)</label>
+                                <input type="number" id="temperature" name="temperature" class="form-control" step="0.1" min="0" max="60" placeholder="25" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="humidity" class="form-label">Humidity (%)</label>
+                                <input type="number" id="humidity" name="humidity" class="form-control" step="1" min="0" max="100" placeholder="65" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="moisture" class="form-label">Moisture (%)</label>
+                                <input type="number" id="moisture" name="moisture" class="form-control" step="1" min="0" max="100" placeholder="40" required>
+                            </div>
+                        </div>
+
+                        <div class="form-error" id="form-error" style="display: none;"></div>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-btn" style="margin-top: 1.5rem;">
+                            <i class="fas fa-flask"></i> Get Recommendation
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results -->
+                <div class="result-section" id="result-section">
+                    <!-- Fertilizer Hero Card -->
+                    <div class="fert-card">
+                        <div class="fert-badge" id="fert-confidence">95% Match</div>
+                        <h2 class="fert-name" id="fert-name">Urea</h2>
+                        <p style="opacity: 0.85; font-size: 0.95rem;" id="fert-full-name">Urea (46-0-0)</p>
+                        <div class="fert-qty" id="fert-qty">50</div>
+                        <div class="fert-qty-unit">kg per Acre</div>
+                    </div>
+
+                    <!-- NPK Deficiency Bars -->
+                    <div class="npk-bars">
+                        <h4><i class="fas fa-chart-bar"></i> Soil Nutrient Levels</h4>
+                        <div class="npk-row">
+                            <div class="npk-label">
+                                <span>Nitrogen (N)</span>
+                                <span id="npk-n-val">0</span>
+                            </div>
+                            <div class="npk-bar-bg"><div class="npk-bar-fill npk-n" id="npk-n-bar"></div></div>
+                        </div>
+                        <div class="npk-row">
+                            <div class="npk-label">
+                                <span>Phosphorus (P)</span>
+                                <span id="npk-p-val">0</span>
+                            </div>
+                            <div class="npk-bar-bg"><div class="npk-bar-fill npk-p" id="npk-p-bar"></div></div>
+                        </div>
+                        <div class="npk-row">
+                            <div class="npk-label">
+                                <span>Potassium (K)</span>
+                                <span id="npk-k-val">0</span>
+                            </div>
+                            <div class="npk-bar-bg"><div class="npk-bar-fill npk-k" id="npk-k-bar"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Cards -->
+                    <div class="detail-cards">
+                        <div class="detail-card-item">
+                            <h4><i class="fas fa-hand-holding-water"></i> How to Apply</h4>
+                            <p id="fert-application">Loading...</p>
+                        </div>
+                        <div class="detail-card-item">
+                            <h4><i class="fas fa-info-circle"></i> About This Fertilizer</h4>
+                            <p id="fert-description">Loading...</p>
+                        </div>
+                        <div class="detail-card-item">
+                            <h4><i class="fas fa-rupee-sign"></i> Estimated Cost</h4>
+                            <p id="fert-cost">Loading...</p>
+                        </div>
+                        <div class="detail-card-item warning" id="warning-card">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Important Warning</h4>
+                            <p id="fert-warning">Loading...</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-block" style="margin-top: 1.5rem;" onclick="document.getElementById('result-section').style.display='none';">
+                        <i class="fas fa-redo"></i> Try Another
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

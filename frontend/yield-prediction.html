@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Yield Prediction</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .split-layout { grid-template-columns: 1fr; }
+        }
+
+        .form-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 100%);
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            color: white;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .counter-box {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .counter-unit {
+            font-size: 1.5rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .tonnes-display {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        .comparison-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            margin-top: 1rem;
+        }
+
+        .comparison-bar-bg {
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .comparison-bar-fill {
+            height: 100%;
+            background: #fcd34d; /* yellow */
+            border-radius: 6px;
+            width: 0%;
+            transition: width 1.5s ease-out;
+        }
+
+        .meaning-card {
+            background: white;
+            color: var(--text-dark);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .meaning-card h4 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meaning-card p {
+            color: var(--gray-600);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        .geo-btn {
+            background: var(--light-green);
+            color: var(--dark-green);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        .geo-btn:hover {
+            background: #dcfce7;
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+
+        <div class="content-area">
+            
+            <div class="info-card" style="margin-bottom: 2rem;">
+                <h2 style="color: var(--dark-green); margin-bottom: 0.5rem;">Forecast Your Harvest</h2>
+                <p style="color: var(--gray-600);">Enter your land details and inputs to accurately predict your total crop yield for the season using our AI model.</p>
+            </div>
+
+            <div class="split-layout">
+                <!-- Form Section -->
+                <div class="form-card">
+                    <form id="yield-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="crop" class="form-label">Crop Type</label>
+                                <select id="crop" name="crop" class="form-control" required>
+                                    <option value="">Select Crop</option>
+                                    <option value="Rice">Rice</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Maize">Maize</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Sugarcane">Sugarcane</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="season" class="form-label">Season</label>
+                                <select id="season" name="season" class="form-control" required>
+                                    <option value="">Select Season</option>
+                                    <option value="Kharif">Kharif (Monsoon)</option>
+                                    <option value="Rabi">Rabi (Winter)</option>
+                                    <option value="Zaid">Zaid (Summer)</option>
+                                    <option value="Whole Year">Whole Year</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="region" class="form-label">Region / State</label>
+                            <select id="region" name="region" class="form-control" required>
+                                <option value="">Select Region</option>
+                                <option value="North">North India (Punjab, Haryana, UP)</option>
+                                <option value="South">South India (Karnataka, TN, AP)</option>
+                                <option value="East">East India (Bengal, Bihar, Odisha)</option>
+                                <option value="West">West India (Gujarat, Maharashtra)</option>
+                                <option value="Central">Central India (MP, Chhattisgarh)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="area_ha" class="form-label">Land Area (in Hectares)</label>
+                            <input type="number" id="area_ha" name="area_ha" class="form-control" step="0.1" min="0.1" placeholder="e.g. 2.5" required>
+                            <small style="color: var(--gray-500); display: block; margin-top: 4px;">1 Hectare = 2.47 Acres</small>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--gray-200); margin: 1.5rem 0;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h4 style="color: var(--gray-600); margin-bottom: 1rem;">Inputs & Environment</h4>
+                            <button type="button" class="geo-btn" id="geo-btn"><i class="fas fa-cloud-rain"></i> Auto-fill Rainfall</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rainfall" class="form-label">Annual Rainfall (mm)</label>
+                            <input type="number" id="rainfall" name="rainfall" class="form-control" step="1" placeholder="e.g. 1200" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fertilizer_kg" class="form-label">Total Fertilizer (kg)</label>
+                                <input type="number" id="fertilizer_kg" name="fertilizer_kg" class="form-control" step="1" min="0" placeholder="e.g. 150" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pesticide_kg" class="form-label">Total Pesticide (kg)</label>
+                                <input type="number" id="pesticide_kg" name="pesticide_kg" class="form-control" step="0.1" min="0" placeholder="e.g. 15" required>
+                            </div>
+                        </div>
+
+                        <div class="form-error" id="form-error" style="display: none;"></div>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-btn" style="margin-top: 1rem;">
+                            <i class="fas fa-calculator"></i> <span data-i18n="yld.btn.predict">Predict Yield</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results Section -->
+                <div class="result-card" id="result-card">
+                    <div class="result-title">Estimated Total Harvest</div>
+                    
+                    <div class="counter-box">
+                        <span id="yield-total">0</span>
+                        <span class="counter-unit">kg</span>
+                    </div>
+                    
+                    <div class="tonnes-display">
+                        <i class="fas fa-truck"></i> Equals <strong id="yield-tonnes">0</strong> Tonnes
+                    </div>
+
+                    <div class="comparison-section">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Yield per Hectare</span>
+                            <strong id="yield-per-ha">0 kg/ha</strong>
+                        </div>
+                        <div class="comparison-bar-bg">
+                            <div class="comparison-bar-fill" id="yield-bar"></div>
+                        </div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; text-align: right;">Based on regional averages</div>
+                    </div>
+
+                    <div class="meaning-card">
+                        <h4><i class="fas fa-lightbulb"></i> What this means</h4>
+                        <p id="meaning-text">Loading insights...</p>
+                    </div>
+                    
+                    <button class="btn btn-secondary btn-block" style="margin-top: 1.5rem; color: var(--dark-green); background: white; border: none;" onclick="document.getElementById('result-card').style.display='none';">
+                        <i class="fas fa-redo"></i> Recalculate
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>

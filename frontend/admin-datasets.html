@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://api.openweathermap.org">
+    <link rel="preconnect" href="https://openweathermap.org">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Agriculture — Datasets & Models</title>
+    <link rel="stylesheet" href="/static/css/bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .admin-sidebar {
+            background-color: #0f172a;
+        }
+        .admin-sidebar .sidebar-header { color: white; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .admin-sidebar .nav-item { color: #cbd5e1; }
+        .admin-sidebar .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+        .admin-sidebar .nav-item.active { background: var(--primary-green); color: white; }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .section-header h3 { color: var(--dark-green); margin: 0;}
+
+        /* Datasets Grid */
+        .dataset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .dataset-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-top: 4px solid var(--primary-green);
+        }
+        .dataset-card h4 { margin-bottom: 0.5rem; color: var(--text-dark); word-break: break-all;}
+        .dataset-card .meta { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;}
+        
+        /* Models Grid */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .model-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+        .model-card h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; color: var(--dark-green); border-bottom: 1px solid var(--gray-100); padding-bottom: 8px;}
+        .model-stat { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px;}
+        .model-stat strong { color: var(--text-dark); }
+        
+        /* Progress & Logs */
+        .progress-container {
+            display: none;
+            margin-top: 1rem;
+            background: var(--gray-100);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .progress-bar-bg {
+            height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; margin-bottom: 8px;
+        }
+        .progress-bar-fill {
+            height: 100%; background: var(--primary-green); width: 0%; transition: width 0.3s;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        .log-window {
+            background: #1e293b;
+            color: #10b981;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 10px;
+            border-radius: 4px;
+            height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+
+        /* Upload form */
+        .upload-area {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border: 2px dashed var(--gray-300);
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="dashboard-layout">
+
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header"><i class="fas fa-shield-alt"></i><span>Admin Panel</span></div>
+        <nav class="sidebar-nav">
+            <a href="/admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span data-i18n="nav.dashboard"> Dashboard</span>
+</a>
+            <a href="#" class="nav-item"><i class="fas fa-users"></i> User Management</a>
+            <a href="/admin-datasets.html" class="nav-item active"><i class="fas fa-database"></i> Datasets & Models</a>
+            <a href="#" class="nav-item"><i class="fas fa-server"></i> System Logs</a>
+            <a href="/dashboard.html" class="nav-item" style="margin-top: auto;"><i class="fas fa-arrow-left"></i> Exit Admin</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        
+
+        <div class="content-area" id="admin-content" style="display: none;">
+            
+            <!-- Upload Section -->
+            <div class="upload-area">
+                <h4 style="margin-bottom: 1rem; color: var(--dark-green);"><i class="fas fa-upload"></i> Upload New Dataset</h4>
+                <form id="upload-form" style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <input type="file" id="dataset-file" accept=".csv" required style="max-width: 300px;">
+                    <button type="submit" class="btn btn-primary" id="upload-btn">Upload CSV</button>
+                </form>
+                <div id="upload-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
+            </div>
+
+            <!-- Datasets Section -->
+            <div class="section-header">
+                <h3><i class="fas fa-table"></i> Available Datasets</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadDatasets()"><i class="fas fa-sync"></i> Refresh</button>
+            </div>
+            <div class="dataset-grid" id="dataset-grid">
+                <!-- Populated by JS -->
+                <p>Loading datasets...</p>
+            </div>
+
+            <!-- Models Section -->
+            <div class="section-header">
+                <h3><i class="fas fa-brain"></i> AI Model Management</h3>
+            </div>
+            <div class="model-grid">
+                
+                <!-- Crop Model -->
+                <div class="model-card">
+                    <h4><i class="fas fa-leaf" style="color: #16a34a;"></i><span data-i18n="dash.card.crop"> Crop Recommendation</span>
+</h4>
+                    <div class="model-stat"><span>Last Trained:</span> <strong id="trained-crop">Unknown</strong></div>
+                    <div class="model-stat"><span>Current Accuracy:</span> <strong id="acc-crop">~95.0%</strong></div>
+                    <button class="btn btn-secondary btn-sm btn-block" style="margin-top: 1rem;" onclick="triggerRetrain('crop')">
+                        <i class="fas fa-cogs"></i> Retrain Model
+                    </button>
+                    <div class="progress-container" id="prog-crop">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                            <span id="status-text-crop">Training running...</span>
+                            <span id="status-pct-crop">--</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-crop" style="width: 50%;"></div></div>
+                        <div class="log-window" id="log-crop"></div>
+                    </div>
+                </div>
+
+                <!-- Disease Model -->
+                <div class="model-card">
+                    <h4><i class="fas fa-bug" style="color: #dc2626;"></i><span data-i18n="nav.disease_detection"> Disease Detection (CNN)</span>
+</h4>
+                    <div class="model-stat"><span>Last Trained:</span> <strong id="trained-disease">Unknown</strong></div>
+                    <div class="model-stat"><span>Current Accuracy:</span> <strong id="acc-disease">~92.0%</strong></div>
+                    <button class="btn btn-secondary btn-sm btn-block" style="margin-top: 1rem;" onclick="triggerRetrain('disease')">
+                        <i class="fas fa-cogs"></i> Retrain Model
+                    </button>
+                    <div class="progress-container" id="prog-disease">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                            <span id="status-text-disease">Training running...</span>
+                            <span id="status-pct-disease">--</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-disease" style="width: 50%;"></div></div>
+                        <div class="log-window" id="log-disease"></div>
+                    </div>
+                </div>
+
+                <!-- Yield Model -->
+                <div class="model-card">
+                    <h4><i class="fas fa-chart-line" style="color: #ea580c;"></i><span data-i18n="nav.yield_prediction"> Yield Prediction</span>
+</h4>
+                    <div class="model-stat"><span>Last Trained:</span> <strong id="trained-yield">Unknown</strong></div>
+                    <div class="model-stat"><span>Current R² Score:</span> <strong id="acc-yield">~0.88</strong></div>
+                    <button class="btn btn-secondary btn-sm btn-block" style="margin-top: 1rem;" onclick="triggerRetrain('yield')">
+                        <i class="fas fa-cogs"></i> Retrain Model
+                    </button>
+                    <div class="progress-container" id="prog-yield">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                            <span id="status-text-yield">Training running...</span>
+                            <span id="status-pct-yield">--</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-yield" style="width: 50%;"></div></div>
+                        <div class="log-window" id="log-yield"></div>
+                    </div>
+                </div>
+
+                <!-- Fertilizer Model -->
+                <div class="model-card">
+                    <h4><i class="fas fa-vial" style="color: #2563eb;"></i> Fertilizer Recommendation</h4>
+                    <div class="model-stat"><span>Last Trained:</span> <strong id="trained-fertilizer">Unknown</strong></div>
+                    <div class="model-stat"><span>Current Accuracy:</span> <strong id="acc-fertilizer">~90.0%</strong></div>
+                    <button class="btn btn-secondary btn-sm btn-block" style="margin-top: 1rem;" onclick="triggerRetrain('fertilizer')">
+                        <i class="fas fa-cogs"></i> Retrain Model
+                    </button>
+                    <div class="progress-container" id="prog-fertilizer">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                            <span id="status-text-fertilizer">Training running...</span>
+                            <span id="status-pct-fertilizer">--</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-fertilizer" style="width: 50%;"></div></div>
+                        <div class="log-window" id="log-fertilizer"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+                    <script src="/static/js/bundle.min.js"></script>
+</body>
+</html>
