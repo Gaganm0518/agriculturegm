@@ -1,0 +1,72 @@
+{
+    "Urea": {
+        "name": "Urea (46-0-0)",
+        "description": "Urea is the most widely used nitrogen fertilizer in the world. It contains 46% nitrogen, making it the richest solid nitrogen source available.",
+        "deficiency_addressed": "Nitrogen (N)",
+        "quantity_kg_per_acre": 50,
+        "application_method": "Broadcast evenly over the field 2-3 days before irrigation. For standing crops, apply in splits — 50% at sowing, 25% at tillering, and 25% at panicle initiation.",
+        "best_for": ["Rice", "Wheat", "Maize", "Sugarcane"],
+        "warning": "Do not apply urea with seeds directly, as it may cause seed burn. Avoid application during heavy rainfall to prevent nitrogen loss through leaching.",
+        "cost_estimate": "₹270–320 per 50 kg bag"
+    },
+    "DAP": {
+        "name": "DAP (18-46-0)",
+        "description": "Di-Ammonium Phosphate provides both nitrogen (18%) and phosphorus (46%). It is the most popular phosphatic fertilizer.",
+        "deficiency_addressed": "Phosphorus (P)",
+        "quantity_kg_per_acre": 45,
+        "application_method": "Apply as a basal dose during land preparation by drilling or broadcasting. Mix into the top 5-10 cm of soil. Best applied before sowing.",
+        "best_for": ["Wheat", "Rice", "Pulses", "Cotton"],
+        "warning": "Do not mix with alkaline fertilizers like calcium ammonium nitrate. Store in a dry place as DAP is hygroscopic.",
+        "cost_estimate": "₹1,350 per 50 kg bag"
+    },
+    "MOP": {
+        "name": "MOP — Muriate of Potash (0-0-60)",
+        "description": "Muriate of Potash (KCl) is the most common potassium fertilizer, containing 60% K₂O. Essential for disease resistance and water regulation in plants.",
+        "deficiency_addressed": "Potassium (K)",
+        "quantity_kg_per_acre": 35,
+        "application_method": "Apply as basal dose during final land preparation. For fruit crops, apply in a ring around the base of the plant. Split application recommended for sandy soils.",
+        "best_for": ["Cotton", "Sugarcane", "Maize", "Fruits"],
+        "warning": "Avoid over-application near germinating seeds. High chloride content may harm chloride-sensitive crops like tobacco and potatoes.",
+        "cost_estimate": "₹900–1,000 per 50 kg bag"
+    },
+    "NPK 10-26-26": {
+        "name": "NPK Complex 10-26-26",
+        "description": "A balanced complex fertilizer with 10% N, 26% P₂O₅, and 26% K₂O. Ideal for crops needing higher phosphorus and potassium with moderate nitrogen.",
+        "deficiency_addressed": "Phosphorus (P) + Potassium (K)",
+        "quantity_kg_per_acre": 50,
+        "application_method": "Apply as basal fertilizer during sowing. Can be drilled alongside the seed row at 5 cm depth. Supplement with urea for nitrogen top-dressing.",
+        "best_for": ["Pulses", "Wheat", "Millets"],
+        "warning": "Not suitable as a sole nitrogen source — always supplement with urea or ammonium sulphate for standing crops.",
+        "cost_estimate": "₹1,400–1,500 per 50 kg bag"
+    },
+    "NPK 20-20-20": {
+        "name": "NPK Complex 20-20-20",
+        "description": "A perfectly balanced water-soluble fertilizer providing equal parts nitrogen, phosphorus, and potassium. Excellent for fertigation and foliar spray.",
+        "deficiency_addressed": "Balanced (N + P + K)",
+        "quantity_kg_per_acre": 40,
+        "application_method": "Dissolve 3-5 grams per litre of water for foliar spray. For fertigation (drip), use 2-4 kg per acre per application cycle. Apply every 10-15 days during the growing season.",
+        "best_for": ["Vegetables", "Fruits", "Flowers", "All crops"],
+        "warning": "Avoid spraying during peak sunshine hours to prevent leaf burn. Always test spray on a small area first.",
+        "cost_estimate": "₹500–700 per 1 kg pack"
+    },
+    "Ammonium Sulphate": {
+        "name": "Ammonium Sulphate (21-0-0 + 24S)",
+        "description": "Contains 21% nitrogen and 24% sulphur. Ideal for sulphur-deficient soils and crops that need both N and S, such as oilseeds and pulses.",
+        "deficiency_addressed": "Nitrogen (N) + Sulphur (S)",
+        "quantity_kg_per_acre": 55,
+        "application_method": "Broadcast and incorporate into the soil. Can be side-dressed along crop rows. Apply 2-3 weeks after sowing for maximum benefit.",
+        "best_for": ["Rice", "Maize", "Oilseeds", "Sugarcane"],
+        "warning": "Acidifies soil over time. Not recommended for already acidic soils (pH < 5.5). Periodic liming may be needed with continued use.",
+        "cost_estimate": "₹600–700 per 50 kg bag"
+    },
+    "SSP": {
+        "name": "SSP — Single Super Phosphate (0-16-0 + 11S + 21Ca)",
+        "description": "Single Super Phosphate provides phosphorus (16%), sulphur (11%), and calcium (21%). It is the most economical source of phosphorus for Indian soils.",
+        "deficiency_addressed": "Phosphorus (P) + Sulphur (S) + Calcium (Ca)",
+        "quantity_kg_per_acre": 60,
+        "application_method": "Apply as basal dose at the time of sowing. Broadcast and mix well into the soil. Best suited for acidic and neutral soils.",
+        "best_for": ["Pulses", "Oilseeds", "Rice", "Groundnut"],
+        "warning": "Not suitable for alkaline soils (pH > 8). Bulkier than DAP — requires more quantity per acre for equivalent phosphorus.",
+        "cost_estimate": "₹400–500 per 50 kg bag"
+    }
+}

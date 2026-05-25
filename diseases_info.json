@@ -1,0 +1,37 @@
+{
+    "Bacterial_Spot": {
+        "display_name": "Bacterial Spot",
+        "symptoms": "Small, dark, water-soaked spots on leaves that may have a yellow halo. Spots enlarge and become angular. Severely affected leaves turn yellow and drop.",
+        "treatment": "Apply copper-based bactericides early in the season. Remove and destroy infected plant debris. Use disease-free seeds and resistant varieties. Avoid overhead irrigation to reduce leaf wetness.",
+        "severity": "Moderate",
+        "affected_crops": ["Tomato", "Pepper", "Peach"]
+    },
+    "Early_Blight": {
+        "display_name": "Early Blight",
+        "symptoms": "Dark brown to black concentric rings (target-like spots) on older leaves. Lesions start on lower leaves and move upward. Yellowing around spots, premature leaf drop.",
+        "treatment": "Apply fungicides containing chlorothalonil or mancozeb at first sign. Practice crop rotation (3-year cycle). Remove infected leaves immediately. Ensure proper plant spacing for air circulation.",
+        "severity": "High",
+        "affected_crops": ["Tomato", "Potato", "Eggplant"]
+    },
+    "Late_Blight": {
+        "display_name": "Late Blight",
+        "symptoms": "Large, irregular, water-soaked, greenish-black lesions on leaves. White fuzzy mold growth on leaf undersides in humid conditions. Rapid plant collapse in severe cases.",
+        "treatment": "Apply systemic fungicides (metalaxyl or mefenoxam) preventively. Destroy all infected plants and tubers immediately. Avoid overhead watering. Plant certified disease-free seed potatoes.",
+        "severity": "Critical",
+        "affected_crops": ["Tomato", "Potato"]
+    },
+    "Leaf_Mold": {
+        "display_name": "Leaf Mold",
+        "symptoms": "Pale greenish-yellow spots on upper leaf surface. Olive-green to grayish-purple velvety mold on the underside. Leaves curl, wither, and drop in severe infections.",
+        "treatment": "Improve greenhouse ventilation and reduce humidity below 85%. Apply fungicides containing chlorothalonil. Remove and destroy affected leaves. Stake plants to improve airflow.",
+        "severity": "Moderate",
+        "affected_crops": ["Tomato"]
+    },
+    "Healthy": {
+        "display_name": "Healthy",
+        "symptoms": "No visible disease symptoms. Leaves are green, firm, and show normal growth patterns.",
+        "treatment": "No treatment needed. Continue regular watering, fertilization, and monitoring. Maintain preventive measures like crop rotation and proper spacing.",
+        "severity": "None",
+        "affected_crops": ["All"]
+    }
+}

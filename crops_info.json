@@ -1,0 +1,112 @@
+{
+    "rice": {
+        "season": "Kharif (Monsoon)",
+        "water_needs": "High (Needs standing water)",
+        "growing_tips": "Requires hot and humid climate. Best grown in clayey loam soil which can retain water."
+    },
+    "maize": {
+        "season": "Kharif",
+        "water_needs": "Moderate",
+        "growing_tips": "Needs well-drained fertile soils. Avoid waterlogging at any growth stage."
+    },
+    "chickpea": {
+        "season": "Rabi (Winter)",
+        "water_needs": "Low",
+        "growing_tips": "Grows well in dry and cold climates. Does not tolerate heavy rains."
+    },
+    "kidneybeans": {
+        "season": "Kharif",
+        "water_needs": "Moderate",
+        "growing_tips": "Needs well-drained loamy soils. Sensitive to frost and waterlogging."
+    },
+    "pigeonpeas": {
+        "season": "Kharif",
+        "water_needs": "Moderate",
+        "growing_tips": "Deep-rooted crop, highly drought-tolerant. Prefers well-drained soils."
+    },
+    "mothbeans": {
+        "season": "Kharif",
+        "water_needs": "Very Low",
+        "growing_tips": "Extremely drought-resistant. Grows well in sandy soils."
+    },
+    "mungbean": {
+        "season": "Kharif / Zaid",
+        "water_needs": "Low",
+        "growing_tips": "Short duration crop. Needs warm climate and well-drained loamy soil."
+    },
+    "blackgram": {
+        "season": "Kharif",
+        "water_needs": "Low to Moderate",
+        "growing_tips": "Requires a hot and humid climate. Cannot tolerate frost or waterlogging."
+    },
+    "lentil": {
+        "season": "Rabi",
+        "water_needs": "Low",
+        "growing_tips": "Grows best in cold climates. Requires very little irrigation."
+    },
+    "pomegranate": {
+        "season": "Perennial",
+        "water_needs": "Moderate",
+        "growing_tips": "Thrives in semi-arid conditions. Needs hot summers and cool winters."
+    },
+    "banana": {
+        "season": "Perennial",
+        "water_needs": "High",
+        "growing_tips": "Requires consistent moisture and warm tropical climate. Protect from strong winds."
+    },
+    "mango": {
+        "season": "Perennial",
+        "water_needs": "Low to Moderate",
+        "growing_tips": "Needs distinct dry weather during flowering. Prefers deep, well-drained soil."
+    },
+    "grapes": {
+        "season": "Perennial",
+        "water_needs": "Moderate",
+        "growing_tips": "Requires hot, dry summers and cool winters. Pruning is essential for good yield."
+    },
+    "watermelon": {
+        "season": "Zaid (Summer)",
+        "water_needs": "High",
+        "growing_tips": "Thrives in hot weather. Needs sandy loam soil and frequent irrigation."
+    },
+    "muskmelon": {
+        "season": "Zaid",
+        "water_needs": "Moderate to High",
+        "growing_tips": "Requires warm, dry weather and plenty of sunshine. Avoid waterlogging."
+    },
+    "apple": {
+        "season": "Perennial",
+        "water_needs": "Moderate",
+        "growing_tips": "Requires chilling hours during winter. Best grown in hilly areas."
+    },
+    "orange": {
+        "season": "Perennial",
+        "water_needs": "Moderate",
+        "growing_tips": "Needs sub-tropical climate. Sensitive to both frost and extreme heat."
+    },
+    "papaya": {
+        "season": "Perennial",
+        "water_needs": "Moderate",
+        "growing_tips": "Highly sensitive to frost and waterlogging. Needs well-drained soil."
+    },
+    "coconut": {
+        "season": "Perennial",
+        "water_needs": "High",
+        "growing_tips": "Thrives in humid coastal regions. Needs well-distributed rainfall."
+    },
+    "cotton": {
+        "season": "Kharif",
+        "water_needs": "Moderate",
+        "growing_tips": "Requires 210 frost-free days. Needs black or alluvial soils."
+    },
+    "jute": {
+        "season": "Kharif",
+        "water_needs": "High",
+        "growing_tips": "Requires hot and very humid climate. Grows best in flood plains and deltas."
+    },
+    "coffee": {
+        "season": "Perennial",
+        "water_needs": "High",
+        "growing_tips": "Requires shade, warm climate, and well-distributed rainfall. Grown on hill slopes."
+    }
+}
